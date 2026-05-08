@@ -1,8 +1,10 @@
 # ENEM Score Analysis: 2015–2023
 
 ## Description
-This repository contains data processing and analysis of ENEM scores from 2015 to 2023, broken down by municipality and state (UF).
 
+ENEM (Exame Nacional do Ensino Médio) is Brazil's standardized national exam taken at the end of high school. It is widely used as the primary admission criterion for both public and private universities across the country.
+
+This repository contains data processing and analysis of ENEM scores from 2015 to 2023, broken down by municipality and state (UF).
 We applied clustering techniques to group municipalities with similar performance profiles, identifying regional patterns. We also built a scatter plot to analyze the relationship between scores and family income.
 
 ## Installation
