@@ -331,14 +331,14 @@ def weighted_average(
 def process_data(
     df_participants_raw: pd.DataFrame,
     df_results_raw: pd.DataFrame,
-    ano: int,
+    year: int,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Runs the full processing pipeline for a specific year.
 
     Args:
         df_participants_raw: Raw participants DataFrame.
         df_results_raw: Raw results DataFrame.
-        ano: Reference year for processing.
+        year: Reference year for processing.
 
     Returns:
         Tuple with 4 outputs in this order:
@@ -348,7 +348,7 @@ def process_data(
         4) scaled features by state.
     """
 
-    _ = ano
+    _ = year
 
     df_participants = process_participants(df_participants_raw)
     df_results = process_results(df_results_raw)
@@ -372,7 +372,7 @@ def process_data(
 def split_participants_results(
     df_microdata: pd.DataFrame,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Delegates microdata splitting to the canonical implementation.
+    """Delegates microdata splitting to the cyearnical implementation.
 
     Args:
         df_microdata: Raw annual DataFrame with all relevant columns.

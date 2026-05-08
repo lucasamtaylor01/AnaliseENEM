@@ -89,34 +89,34 @@ def prepare_directories() -> None:
     OUTDIR_MODEL.mkdir(parents=True, exist_ok=True)
 
 
-def get_processed_paths(ano: int) -> Tuple[Path, Path]:
+def get_processed_paths(year: int) -> Tuple[Path, Path]:
     """Builds city-level output paths for a given year.
 
     Args:
-        ano: Reference year for processing.
+        year: Reference year for processing.
 
     Returns:
         Tuple with the processed CSV path and the model CSV path for cities.
     """
 
-    processing_outdir = OUTDIR_PROCESSING_BASE / str(ano)
+    processing_outdir = OUTDIR_PROCESSING_BASE / str(year)
     processing_outdir.mkdir(parents=True, exist_ok=True)
 
     processed_path = (
-        processing_outdir / f"ANALISE_NOTAS_ENEM_MUNICIPIOS_BRASIL_TRATADO_{ano}.csv"
+        processing_outdir / f"ANALISE_NOTAS_ENEM_MUNICIPIOS_BRASIL_TRATADO_{year}.csv"
     )
     model_path = (
-        processing_outdir / f"ANALISE_NOTAS_ENEM_MUNICIPIOS_BRASIL_MODELO_{ano}.csv"
+        processing_outdir / f"ANALISE_NOTAS_ENEM_MUNICIPIOS_BRASIL_MODELO_{year}.csv"
     )
 
     return processed_path, model_path
 
 
-def get_processing_paths(ano: int) -> Tuple[Path, Path, Path, Path]:
+def get_processing_paths(year: int) -> Tuple[Path, Path, Path, Path]:
     """Builds all processing output paths for a given year.
 
     Args:
-        ano: Reference year for processing.
+        year: Reference year for processing.
 
     Returns:
         Tuple with the paths in this order:
@@ -126,13 +126,13 @@ def get_processing_paths(ano: int) -> Tuple[Path, Path, Path, Path]:
         4) model by state.
     """
 
-    processed_city_path, city_model_path = get_processed_paths(ano)
+    processed_city_path, city_model_path = get_processed_paths(year)
     processing_outdir = processed_city_path.parent
     processed_state_path = (
-        processing_outdir / f"ANALISE_NOTAS_ENEM_UF_BRASIL_TRATADO_{ano}.csv"
+        processing_outdir / f"ANALISE_NOTAS_ENEM_UF_BRASIL_TRATADO_{year}.csv"
     )
     state_model_path = (
-        processing_outdir / f"ANALISE_NOTAS_ENEM_UF_BRASIL_MODELO_{ano}.csv"
+        processing_outdir / f"ANALISE_NOTAS_ENEM_UF_BRASIL_MODELO_{year}.csv"
     )
 
     return (
@@ -143,25 +143,25 @@ def get_processing_paths(ano: int) -> Tuple[Path, Path, Path, Path]:
     )
 
 
-def processed_files_exist(ano: int) -> bool:
+def processed_files_exist(year: int) -> bool:
     """Checks whether the output files for a year have already been generated.
 
     Args:
-        ano: Reference year for processing.
+        year: Reference year for processing.
 
     Returns:
         True when both expected files exist; False otherwise.
     """
 
-    processed_path, model_path = get_processed_paths(ano)
+    processed_path, model_path = get_processed_paths(year)
     return processed_path.exists() and model_path.exists()
 
 
-def processing_files_exist(ano: int) -> bool:
+def processing_files_exist(year: int) -> bool:
     """Checks whether all processing output files for a year have been generated.
 
     Args:
-        ano: Reference year for processing.
+        year: Reference year for processing.
 
     Returns:
         True when all expected files exist; False otherwise.
@@ -172,7 +172,7 @@ def processing_files_exist(ano: int) -> bool:
         city_model_path,
         processed_state_path,
         state_model_path,
-    ) = get_processing_paths(ano)
+    ) = get_processing_paths(year)
 
     return all(
         path.exists()
@@ -185,14 +185,14 @@ def processing_files_exist(ano: int) -> bool:
     )
 
 
-def load_raw_data(ano: int) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def load_raw_data(year: int) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Loads raw ENEM data and returns participants and results DataFrames.
 
     Only the columns required by the pipeline are loaded to reduce
     memory usage and read time.
 
     Args:
-        ano: Reference year between 2015 and 2023.
+        year: Reference year between 2015 and 2023.
 
     Returns:
         Tuple with raw participants and results DataFrames.
@@ -201,8 +201,8 @@ def load_raw_data(ano: int) -> Tuple[pd.DataFrame, pd.DataFrame]:
         ValueError: When the provided year is not supported.
     """
 
-    if ano in MICRODATA_FILES:
-        microdata_file = INDIR / MICRODATA_FILES[ano]
+    if year in MICRODATA_FILES:
+        microdata_file = INDIR / MICRODATA_FILES[year]
         df_microdata = pd.read_csv(
             microdata_file,
             sep=";",
