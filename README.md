@@ -1,18 +1,18 @@
-# 📄 Análise de dados do ENEM entre os anos de 2015 e 2023 
+# ENEM Score Analysis: 2015–2023
 
-## 📝 Descrição
-Neste repositório, realizamos o tratamento e a análise das notas do ENEM entre 2015 e 2023 por município e UF.
+## Description
+This repository contains data processing and analysis of ENEM scores from 2015 to 2023, broken down by municipality and state (UF).
 
-Aplicamos técnicas de clusterização para agrupar municípios com perfis semelhantes de desempenho, identificando padrões regionais. Além disso, construímos um gráfico de dispersão para analisar a relação entre nota e renda familiar.
+We applied clustering techniques to group municipalities with similar performance profiles, identifying regional patterns. We also built a scatter plot to analyze the relationship between scores and family income.
 
-## ⚙️ Instalação
-1. Clone o repositório
+## Installation
+1. Clone the repository
    ```bash
    git clone https://github.com/lucasamtaylor01/enem.git
    ```
 
-2. Instalar dependências
-    
+2. Install dependencies
+
    **Linux/macOS:**
    ```bash
    python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
@@ -22,23 +22,23 @@ Aplicamos técnicas de clusterização para agrupar municípios com perfis semel
    python -m venv .venv; .\.venv\Scripts\Activate.ps1; pip install -r requirements.txt
    ```
 
-3. Executar `main.py`
+3. Run `main.py`
 
-## ⚠️ Atenção 
-Os dados utilizados neste projeto são públicos e podem ser obtidos no site oficial do INEP:  
+## Warning
+The data used in this project is public and can be obtained from the official INEP website:
 https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem
 
-Devido ao grande volume, os arquivos não estão incluídos neste repositório. Para executar o projeto, é necessário realizar o download manual dos microdados e organizá-los conforme a estrutura esperada pelo código. Os dados são anonimizados e devem ser utilizados com a devida citação da fonte, em conformidade com a legislação vigente (LGPD).
+Due to the large volume, the files are not included in this repository. To run the project, you must manually download the microdata and organize it according to the structure expected by the code. The data is anonymized and must be used with proper source attribution, in compliance with applicable legislation (LGPD).
 
-## 🤝 Contribuições
-Contribuições são bem-vindas 😊. Caso encontre erros, inconsistências ou tenha sugestões de melhoria, sinta-se à vontade para abrir uma issue ou enviar um pull request. Toda colaboração ajuda a aprimorar o projeto.
+## Contributing
+Contributions are welcome. If you find errors, inconsistencies, or have suggestions for improvement, feel free to open an issue or submit a pull request.
 
-## 🔒 Licença
+## License
 
-O código deste repositório está licenciado sob os termos da [licença MIT](LICENSE). Os dados, por sua vez, são derivados de fontes públicas do INEP e não estão cobertos pela licença MIT, mantendo-se sob as condições de uso definidas pelo órgão responsável.
+The code in this repository is licensed under the terms of the [MIT License](LICENSE). The data, in turn, is derived from public INEP sources and is not covered by the MIT License — it remains subject to the terms of use defined by the responsible agency.
 
-## 🤖 Uso ético de IA
-Este projeto foi desenvolvido com a ajuda do [GitHub Copilot](https://github.com/features/copilot).
+## Ethical AI Use
+This project was developed with the help of [GitHub Copilot](https://github.com/features/copilot).
 
-## 📚 Documentação
-A documentação completa do projeto está disponível na wiki: [https://github.com/lucasamtaylor01/enem/wiki](https://github.com/lucasamtaylor01/enem/wiki)
+## Documentation
+The full project documentation is available on the wiki: [https://github.com/lucasamtaylor01/enem/wiki](https://github.com/lucasamtaylor01/enem/wiki)

@@ -1,102 +1,100 @@
 import pandas as pd
 from sklearn.cluster import KMeans
 
-from utils.carregamento_dados import ANOS_DISPONIVEIS, OUTDIR_MODELO
-from utils.fluxo_dados import carregar_ou_tratar_dados
+from utils.data_loading import AVAILABLE_YEARS, OUTDIR_MODEL
+from utils.data_flow import load_or_process_data
 
 
-def clustering_de_dados(
+def cluster_data(
     df_pre_clustering: pd.DataFrame,
     x_scaled: pd.DataFrame,
 ) -> pd.DataFrame:
-    """Executa KMeans e organiza os clusters por desempenho medio.
+    """Runs KMeans and reorders clusters by average performance.
 
     Args:
-        df_pre_clustering: DataFrame agregado para o nivel analisado
-            (municipio ou UF), contendo as metricas de notas e renda.
-        x_scaled: DataFrame com as features usadas no KMeans.
+        df_pre_clustering: Aggregated DataFrame for the analyzed level
+            (city or state), containing score and income metrics.
+        x_scaled: DataFrame with features used in KMeans.
 
     Returns:
-        DataFrame pos-clustering com a coluna CLUSTER reordenada por
-        desempenho medio (0 = menor desempenho, 2 = maior desempenho).
+        Post-clustering DataFrame with the CLUSTER column reordered by
+        average performance (0 = lowest, 2 = highest).
     """
 
     kmeans = KMeans(n_clusters=3, n_init=200, random_state=0)
     kmeans.fit(x_scaled)
 
     labels = kmeans.labels_
-    df_pos_clustering = df_pre_clustering.copy()
-    df_pos_clustering["CLUSTER_ORIGINAL"] = labels
+    df_post_clustering = df_pre_clustering.copy()
+    df_post_clustering["CLUSTER_ORIGINAL"] = labels
 
-    desempenho_por_cluster = (
-        df_pos_clustering.groupby("CLUSTER_ORIGINAL")["NOTA_GERAL_MEDIA"]
+    performance_by_cluster = (
+        df_post_clustering.groupby("CLUSTER_ORIGINAL")["OVERALL_SCORE_AVG"]
         .mean()
         .sort_values(ascending=True)
     )
 
-    mapa_clusters = {
-        cluster_original: novo_cluster
-        for novo_cluster, cluster_original in enumerate(desempenho_por_cluster.index)
+    cluster_map = {
+        original_cluster: new_cluster
+        for new_cluster, original_cluster in enumerate(performance_by_cluster.index)
     }
 
-    df_pos_clustering["CLUSTER"] = df_pos_clustering["CLUSTER_ORIGINAL"].map(
-        mapa_clusters
+    df_post_clustering["CLUSTER"] = df_post_clustering["CLUSTER_ORIGINAL"].map(
+        cluster_map
     )
-    df_pos_clustering = df_pos_clustering.drop(columns=["CLUSTER_ORIGINAL"])
+    df_post_clustering = df_post_clustering.drop(columns=["CLUSTER_ORIGINAL"])
 
-    return df_pos_clustering
+    return df_post_clustering
 
 
-def processar_ano(ano: int) -> None:
-    """Processa um ano completo: tratamento, clustering e exportacao.
+def process_year(ano: int) -> None:
+    """Processes a full year: data processing, clustering, and export.
 
     Args:
-        ano: Ano de referencia a ser processado.
+        ano: Reference year to process.
     """
 
-    print(f"Iniciando processamento do ano {ano}...\n")
+    print(f"Starting processing for year {ano}...\n")
     (
-        df_pre_clustering_municipio,
-        x_scaled_municipio,
-        df_pre_clustering_uf,
-        x_scaled_uf,
-    ) = carregar_ou_tratar_dados(ano)
+        df_pre_clustering_city,
+        x_scaled_city,
+        df_pre_clustering_state,
+        x_scaled_state,
+    ) = load_or_process_data(ano)
 
-    print(f"Realizando clustering por municipio para o ano {ano}...\n")
-    df_pos_clustering_municipio = clustering_de_dados(
-        df_pre_clustering_municipio,
-        x_scaled_municipio,
+    print(f"Running city-level clustering for year {ano}...\n")
+    df_post_clustering_city = cluster_data(
+        df_pre_clustering_city,
+        x_scaled_city,
     )
-    print(f"Clustering por municipio realizado com sucesso para o ano {ano}.\n")
+    print(f"City-level clustering completed successfully for year {ano}.\n")
 
-    (OUTDIR_MODELO / str(ano)).mkdir(parents=True, exist_ok=True)
+    (OUTDIR_MODEL / str(ano)).mkdir(parents=True, exist_ok=True)
 
-    caminho_cluster_municipio = (
-        OUTDIR_MODELO
+    city_cluster_path = (
+        OUTDIR_MODEL
         / str(ano)
         / f"ANALISE_NOTAS_ENEM_MUNICIPIOS_BRASIL_CLUSTERS_{ano}.csv"
     )
-    df_pos_clustering_municipio.to_csv(caminho_cluster_municipio, index=False)
-    print(
-        f"Dados de clustering por municipio salvos com sucesso em {caminho_cluster_municipio}\n"
+    df_post_clustering_city.to_csv(city_cluster_path, index=False)
+    print(f"City clustering data saved successfully to {city_cluster_path}\n")
+
+    print(f"Running state-level clustering for year {ano}...\n")
+    df_post_clustering_state = cluster_data(
+        df_pre_clustering_state,
+        x_scaled_state,
     )
+    print(f"State-level clustering completed successfully for year {ano}.\n")
 
-    print(f"Realizando clustering por UF para o ano {ano}...\n")
-    df_pos_clustering_uf = clustering_de_dados(
-        df_pre_clustering_uf,
-        x_scaled_uf,
+    state_cluster_path = (
+        OUTDIR_MODEL / str(ano) / f"ANALISE_NOTAS_ENEM_UF_BRASIL_CLUSTERS_{ano}.csv"
     )
-    print(f"Clustering por UF realizado com sucesso para o ano {ano}.\n")
-
-    caminho_cluster_uf = (
-        OUTDIR_MODELO / str(ano) / f"ANALISE_NOTAS_ENEM_UF_BRASIL_CLUSTERS_{ano}.csv"
-    )
-    df_pos_clustering_uf.to_csv(caminho_cluster_uf, index=False)
-    print(f"Dados de clustering por UF salvos com sucesso em {caminho_cluster_uf}\n")
+    df_post_clustering_state.to_csv(state_cluster_path, index=False)
+    print(f"State clustering data saved successfully to {state_cluster_path}\n")
 
 
-def rodar_todos_os_anos() -> None:
-    """Executa o pipeline de clustering para todos os anos disponiveis."""
+def run_all_years() -> None:
+    """Runs the clustering pipeline for all available years."""
 
-    for ano in ANOS_DISPONIVEIS:
-        processar_ano(ano)
+    for ano in AVAILABLE_YEARS:
+        process_year(ano)

@@ -1,31 +1,31 @@
 from utils.clustering import (
-    processar_ano,
-    rodar_todos_os_anos,
+    process_year,
+    run_all_years,
 )
-from utils.carregamento_dados import (
-    ANOS_DISPONIVEIS,
+from utils.data_loading import (
+    AVAILABLE_YEARS,
 )
 
 
 def main() -> None:
-    """Executa o ponto de entrada interativo do pipeline.
+    """Runs the interactive pipeline entry point.
 
-    Solicita um ano especifico (2015-2023) ou a palavra "todos" e
-    encaminha a execucao para o processamento correspondente.
+    Prompts for a specific year (2015-2023) or the word "all" and
+    routes execution to the corresponding processor.
     """
 
-    entrada = input("Digite o ano para análise (2015-2023) ou 'todos': ").strip().lower()
+    user_input = input("Enter the year for analysis (2015-2023) or 'all': ").strip().lower()
 
-    if entrada == "todos":
-        rodar_todos_os_anos()
+    if user_input == "all":
+        run_all_years()
     else:
         try:
-            ano_escolhido = int(entrada)
-            if ano_escolhido not in ANOS_DISPONIVEIS:
+            chosen_year = int(user_input)
+            if chosen_year not in AVAILABLE_YEARS:
                 raise ValueError
-            processar_ano(ano_escolhido)
+            process_year(chosen_year)
         except ValueError:
-            print("Entrada inválida. Digite um ano entre 2015 e 2023 ou 'todos'.")
+            print("Invalid input. Enter a year between 2015 and 2023 or 'all'.")
 
 
 if __name__ == "__main__":
