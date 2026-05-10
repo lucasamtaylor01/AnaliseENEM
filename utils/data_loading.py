@@ -42,15 +42,16 @@ REQUIRED_MICRODATA_COLUMNS = [
 def split_participants_results(
     df_microdata: pd.DataFrame,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Splits annual microdata into participants and results DataFrames.
+    """Splits annual microdata into participants and results DataFrames,
+    translating column names from Portuguese to English.
 
     Args:
         df_microdata: Raw annual DataFrame with participant and score columns.
 
     Returns:
         Tuple containing:
-        1) Participants DataFrame (socioeconomic profile and exam location),
-        2) Results DataFrame (attendance and scores).
+        1) Participants DataFrame (CITY, CITY_CODE, IS_PRACTICE_TAKER, STATE, FAMILY_INCOME_RAW),
+        2) Results DataFrame (STATE, CITY_CODE, CITY, ATTENDANCE_*, SCORE_*).
     """
 
     df_participants = df_microdata[
@@ -61,7 +62,14 @@ def split_participants_results(
             "SG_UF_PROVA",
             "Q006",
         ]
-    ]
+    ].rename(columns={
+        "NO_MUNICIPIO_PROVA": "CITY",
+        "CO_MUNICIPIO_PROVA": "CITY_CODE",
+        "IN_TREINEIRO": "IS_PRACTICE_TAKER",
+        "SG_UF_PROVA": "STATE",
+        "Q006": "FAMILY_INCOME_RAW",
+    })
+
     df_results = df_microdata[
         [
             "SG_UF_PROVA",
@@ -77,7 +85,20 @@ def split_participants_results(
             "NU_NOTA_MT",
             "NU_NOTA_REDACAO",
         ]
-    ]
+    ].rename(columns={
+        "SG_UF_PROVA": "STATE",
+        "CO_MUNICIPIO_PROVA": "CITY_CODE",
+        "NO_MUNICIPIO_PROVA": "CITY",
+        "TP_PRESENCA_CN": "ATTENDANCE_NATURAL_SCIENCES",
+        "TP_PRESENCA_CH": "ATTENDANCE_HUMANITIES",
+        "TP_PRESENCA_LC": "ATTENDANCE_LANGUAGES",
+        "TP_PRESENCA_MT": "ATTENDANCE_MATH",
+        "NU_NOTA_CN": "SCORE_NATURAL_SCIENCES",
+        "NU_NOTA_CH": "SCORE_HUMANITIES",
+        "NU_NOTA_LC": "SCORE_LANGUAGES",
+        "NU_NOTA_MT": "SCORE_MATH",
+        "NU_NOTA_REDACAO": "SCORE_ESSAY",
+    })
 
     return df_participants, df_results
 
@@ -103,10 +124,10 @@ def get_processed_paths(year: int) -> Tuple[Path, Path]:
     processing_outdir.mkdir(parents=True, exist_ok=True)
 
     processed_path = (
-        processing_outdir / f"ANALISE_NOTAS_ENEM_MUNICIPIOS_BRASIL_TRATADO_{year}.csv"
+        processing_outdir / f"ENEM_SCORES_MUNICIPALITIES_BRAZIL_PROCESSED_{year}.csv"
     )
     model_path = (
-        processing_outdir / f"ANALISE_NOTAS_ENEM_MUNICIPIOS_BRASIL_MODELO_{year}.csv"
+        processing_outdir / f"ENEM_SCORES_MUNICIPALITIES_BRAZIL_MODEL_{year}.csv"
     )
 
     return processed_path, model_path
@@ -129,10 +150,10 @@ def get_processing_paths(year: int) -> Tuple[Path, Path, Path, Path]:
     processed_city_path, city_model_path = get_processed_paths(year)
     processing_outdir = processed_city_path.parent
     processed_state_path = (
-        processing_outdir / f"ANALISE_NOTAS_ENEM_UF_BRASIL_TRATADO_{year}.csv"
+        processing_outdir / f"ENEM_SCORES_STATE_BRAZIL_PROCESSED_{year}.csv"
     )
     state_model_path = (
-        processing_outdir / f"ANALISE_NOTAS_ENEM_UF_BRASIL_MODELO_{year}.csv"
+        processing_outdir / f"ENEM_SCORES_STATE_BRAZIL_MODEL_{year}.csv"
     )
 
     return (

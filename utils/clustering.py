@@ -74,7 +74,7 @@ def process_year(year: int) -> None:
     city_cluster_path = (
         OUTDIR_MODEL
         / str(year)
-        / f"ANALISE_NOTAS_ENEM_MUNICIPIOS_BRASIL_CLUSTERS_{year}.csv"
+        / f"ENEM_SCORES_MUNICIPALITIES_BRAZIL_CLUSTERS_{year}.csv"
     )
     df_post_clustering_city.to_csv(city_cluster_path, index=False)
     print(f"City clustering data saved successfully to {city_cluster_path}\n")
@@ -87,7 +87,7 @@ def process_year(year: int) -> None:
     print(f"State-level clustering completed successfully for year {year}.\n")
 
     state_cluster_path = (
-        OUTDIR_MODEL / str(year) / f"ANALISE_NOTAS_ENEM_UF_BRASIL_CLUSTERS_{year}.csv"
+        OUTDIR_MODEL / str(year) / f"ENEM_SCORES_STATE_BRAZIL_CLUSTERS_{year}.csv"
     )
     df_post_clustering_state.to_csv(state_cluster_path, index=False)
     print(f"State clustering data saved successfully to {state_cluster_path}\n")

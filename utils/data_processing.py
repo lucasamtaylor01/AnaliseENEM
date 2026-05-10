@@ -27,10 +27,7 @@ def process_participants(df_participants_raw: pd.DataFrame) -> pd.DataFrame:
         CITY_CODE, CITY, and FAMILY_INCOME_SM_AVG.
     """
 
-    df_participants = df_participants_raw.rename(columns={
-        'NO_MUNICIPIO_PROVA': 'CITY',
-        'CO_MUNICIPIO_PROVA': 'CITY_CODE',
-    })
+    df_participants = df_participants_raw.copy()
 
     income_map_sm = {
         "A": 0.0,
@@ -52,10 +49,10 @@ def process_participants(df_participants_raw: pd.DataFrame) -> pd.DataFrame:
         "Q": 20.0,
     }
 
-    df_participants["Q006"] = (
-        df_participants["Q006"].squeeze().map(income_map_sm).astype("float64")
+    df_participants["FAMILY_INCOME_RAW"] = (
+        df_participants["FAMILY_INCOME_RAW"].squeeze().map(income_map_sm).astype("float64")
     )
-    df_participants = df_participants.rename(columns={"Q006": "FAMILY_INCOME_SM"})
+    df_participants = df_participants.rename(columns={"FAMILY_INCOME_RAW": "FAMILY_INCOME_SM"})
 
     if "FAMILY_INCOME_SM" in df_participants.columns:
         if not np.issubdtype(
@@ -65,7 +62,7 @@ def process_participants(df_participants_raw: pd.DataFrame) -> pd.DataFrame:
                 df_participants["FAMILY_INCOME_SM"].squeeze().map(income_map_sm)
             )
 
-        mean_income_by_state = df_participants.groupby("SG_UF_PROVA")[
+        mean_income_by_state = df_participants.groupby("STATE")[
             "FAMILY_INCOME_SM"
         ].transform("mean")
         df_participants["FAMILY_INCOME_SM"] = df_participants[
@@ -76,8 +73,8 @@ def process_participants(df_participants_raw: pd.DataFrame) -> pd.DataFrame:
             "FAMILY_INCOME_SM"
         ].fillna(df_participants["FAMILY_INCOME_SM"].mean())
 
-    df_participants = df_participants[df_participants["IN_TREINEIRO"] != 1]
-    df_participants = df_participants.drop(columns=["IN_TREINEIRO"])
+    df_participants = df_participants[df_participants["IS_PRACTICE_TAKER"] != 1]
+    df_participants = df_participants.drop(columns=["IS_PRACTICE_TAKER"])
 
     df_participants["CITY"] = df_participants["CITY"].str.upper()
 
@@ -144,23 +141,28 @@ def process_results(df_results_raw: pd.DataFrame) -> pd.DataFrame:
         subject averages, and overall average.
     """
 
-    df_results = df_results_raw.rename(columns={'CO_MUNICIPIO_PROVA': 'CITY_CODE'})
+    df_results = df_results_raw.copy()
 
-    df_results = df_results[df_results["TP_PRESENCA_CN"] == 1]
-    df_results = df_results[df_results["TP_PRESENCA_CH"] == 1]
-    df_results = df_results[df_results["TP_PRESENCA_LC"] == 1]
-    df_results = df_results[df_results["TP_PRESENCA_MT"] == 1]
+    df_results = df_results[df_results["ATTENDANCE_NATURAL_SCIENCES"] == 1]
+    df_results = df_results[df_results["ATTENDANCE_HUMANITIES"] == 1]
+    df_results = df_results[df_results["ATTENDANCE_LANGUAGES"] == 1]
+    df_results = df_results[df_results["ATTENDANCE_MATH"] == 1]
 
     df_results = df_results.drop(
-        columns=["TP_PRESENCA_CN", "TP_PRESENCA_CH", "TP_PRESENCA_LC", "TP_PRESENCA_MT"]
+        columns=[
+            "ATTENDANCE_NATURAL_SCIENCES",
+            "ATTENDANCE_HUMANITIES",
+            "ATTENDANCE_LANGUAGES",
+            "ATTENDANCE_MATH",
+        ]
     )
 
     score_columns = [
-        "NU_NOTA_CN",
-        "NU_NOTA_CH",
-        "NU_NOTA_LC",
-        "NU_NOTA_MT",
-        "NU_NOTA_REDACAO",
+        "SCORE_NATURAL_SCIENCES",
+        "SCORE_HUMANITIES",
+        "SCORE_LANGUAGES",
+        "SCORE_MATH",
+        "SCORE_ESSAY",
     ]
 
     df_outlier_filtered = df_results.copy()
@@ -197,13 +199,13 @@ def process_results(df_results_raw: pd.DataFrame) -> pd.DataFrame:
     df_results = df_outlier_filtered.copy()
 
     df_results = df_results.groupby('CITY_CODE').agg(
-        STATE=('SG_UF_PROVA', 'first'),
+        STATE=('STATE', 'first'),
         NUM_PARTICIPANTS=('CITY_CODE', 'size'),
-        NATURAL_SCIENCES_SCORE_AVG=('NU_NOTA_CN', 'mean'),
-        HUMANITIES_SCORE_AVG=('NU_NOTA_CH', 'mean'),
-        LANGUAGES_SCORE_AVG=('NU_NOTA_LC', 'mean'),
-        MATH_SCORE_AVG=('NU_NOTA_MT', 'mean'),
-        ESSAY_SCORE_AVG=('NU_NOTA_REDACAO', 'mean'),
+        NATURAL_SCIENCES_SCORE_AVG=('SCORE_NATURAL_SCIENCES', 'mean'),
+        HUMANITIES_SCORE_AVG=('SCORE_HUMANITIES', 'mean'),
+        LANGUAGES_SCORE_AVG=('SCORE_LANGUAGES', 'mean'),
+        MATH_SCORE_AVG=('SCORE_MATH', 'mean'),
+        ESSAY_SCORE_AVG=('SCORE_ESSAY', 'mean'),
     ).reset_index()
 
     df_results["OVERALL_SCORE_AVG"] = df_results[
@@ -372,7 +374,7 @@ def process_data(
 def split_participants_results(
     df_microdata: pd.DataFrame,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Delegates microdata splitting to the cyearnical implementation.
+    """Delegates microdata splitting to the canonical implementation.
 
     Args:
         df_microdata: Raw annual DataFrame with all relevant columns.
