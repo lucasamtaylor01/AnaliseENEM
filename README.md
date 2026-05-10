@@ -1,5 +1,9 @@
 # 📊 ENEM Score Analysis: 2015–2023
 
+## ❓ What's ENEM?
+The National High School Exam (ENEM) is a non-mandatory, standardized Brazilian national exam that evaluates high school students. It is the most important exam of its kind in Brazil and the second largest in the world by number of candidates, behind only China's national college entrance exam.
+ENEM is also used to apply for scholarships at private universities through ProUni or student loans via FIES. In many universities, it has gradually replaced the traditional vestibular as the main form of college admission. [Available on wikipedia.](https://en.wikipedia.org/wiki/Exame_Nacional_do_Ensino_M%C3%A9dio)
+
 ## 📝 Description
 
 ENEM (Exame Nacional do Ensino Médio) is Brazil's standardized national exam taken at the end of high school. It is widely used as the primary admission criterion for both public and private universities across the country.
